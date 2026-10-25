@@ -1,6 +1,13 @@
 from database import tasks_collection
 from bson import ObjectId
 
+def serialize_task(task: dict | None) -> dict | None:
+    if task is None:
+        return None
+
+    task["_id"] = str(task["_id"])
+    return task
+
 def create_task(task_data: dict):
     result = tasks_collection.insert_one(task_data)
 
@@ -42,10 +49,7 @@ def get_tasks(
         .limit(limit)
     )
 
-    for task in tasks:
-        task["_id"] = str(task["_id"])
-
-    return tasks
+    return [serialize_task(task) for task in tasks]
 
 
 
@@ -60,9 +64,7 @@ def get_task_by_id(task_id: str, user_id: str):
     if task is None:
         return None
 
-    task["_id"] = str(task["_id"])
-    return task
-
+    return serialize_task(task)
 
 def update_task_by_id(
     task_id: str,
@@ -87,8 +89,7 @@ def update_task_by_id(
         "user_id": user_id
     })
 
-    task["_id"] = str(task["_id"])
-    return task
+    return serialize_task(task)
 
 
 def delete_task_by_id(task_id: str, user_id: str):

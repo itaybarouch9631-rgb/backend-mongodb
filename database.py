@@ -16,3 +16,8 @@ users_collection = db["users"]
 
 users_collection.create_index("username", unique=True)
 users_collection.create_index("email", unique=True)
+
+tasks_collection.create_index([
+    ("user_id", 1),
+    ("priority", -1)
+])
